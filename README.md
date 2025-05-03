@@ -217,8 +217,9 @@ This is the 8th revceived byte. This is only used when NUM is set to 8
 ## Example C-Code
 
 The following procedures are example C-code which represent read and write prcedures. 
+We can see that we can easily write it in a manner that parallel read/write takes place. 
 
-
+```
 #define REG(base, offset) (*(volatile uint32_t *)((base) + (offset)))
 
 void i2cWrite(uint32_t slaveAdr, uint32_t reg, uint32_t data, uint32_t dev) {
@@ -241,17 +242,17 @@ void i2cWrite(uint32_t slaveAdr, uint32_t reg, uint32_t data, uint32_t dev) {
 
 uint8_t i2cRead(uint32_t slaveAdr, uint32_t reg, uint32_t dev){
 	uint32_t iBase   = 0x00009000;
-	uint32_t device = dev;  // 0 .. 31
+	uint32_t device = dev; 
 	uint32_t offsetDevice = device * 128;
 	uint32_t offsetBit = 1 << device;
 
 	REG(iBase, 0x00) = 0x00000000;
 	REG(iBase, 0x04) = 0x00000000; //rw read = 1 write = 0
 
-	REG(iBase, 0x08 + offsetDevice) = slaveAdr; //addr 6C
-	REG(iBase, 0x0C + offsetDevice) = reg; //reg
-	REG(iBase, 0x10 + offsetDevice) = 0x00; //data write here data is not written
-	REG(iBase, 0x14 + offsetDevice) = 0x00; //data write 0 only reg address is written
+	REG(iBase, 0x08 + offsetDevice) = slaveAdr; 
+	REG(iBase, 0x0C + offsetDevice) = reg; 
+	REG(iBase, 0x10 + offsetDevice) = 0x00; // ignored
+	REG(iBase, 0x14 + offsetDevice) = 0x00; // because no DATA is written
 	REG(iBase, 0x00) = offsetBit;
 	REG(iBase, 0x00) = 0x00000000;
 
@@ -264,11 +265,9 @@ uint8_t i2cRead(uint32_t slaveAdr, uint32_t reg, uint32_t dev){
 	REG(iBase, 0x00) = offsetBit;
 	REG(iBase, 0x00) = 0x00000000;
 	delay(20);
-
-
 	return REG(iBase, 0x40 + offsetDevice);
 }
-
+```
 
 
 
