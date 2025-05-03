@@ -107,7 +107,7 @@ The RW 1 bit defines that it is a read. The NUM can now be anything between 1 an
 The block read needs to be supported by the target. 
 
 
-## Register MAP
+## Register MAP of bitwise registers
 Now since we gave an overview of how to operate the IP let us give a more concrete on how to come up with the correct addresses and bits of the control fields. 
 
 ### ENABLE 0x000
@@ -169,6 +169,14 @@ This bit shows that the was an ACK error.
 - bit-1 shows the ack error from interface-1 
 - ...
 - bit-(num_i2c-1) shows the ack error from the last populated I2C interface.
+
+## Register MAP of registers per each I2C interface
+As stated before each I2C interface has its own section of 128 bytes. Nevertheless the shared registers are within the address space of I2C-interface-0. 
+For each of the following registers therefore there is an offset which is calculated as **offset = 128 * i** with i being the I2C interfaced number. 
+
+
+
+
 
 
 
