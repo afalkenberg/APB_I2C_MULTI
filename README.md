@@ -172,9 +172,9 @@ This bit shows that the was an ACK error.
 
 ## Register MAP of registers per each I2C interface
 As stated before each I2C interface has its own section of 128 bytes. Nevertheless the shared registers are within the address space of I2C-interface-0. 
-For each of the following registers therefore there is an offset which is calculated as **offset = 128 * i** with i being the I2C interfaced number. 
+For each of the following registers therefore there is an offset which is calculated as _offset = 128 * i_ with i being the I2C interface number. 
 
-
+### ADDRESS _0x008 + i*0x80_
 
 
 
