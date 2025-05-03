@@ -219,7 +219,6 @@ This is the 8th revceived byte. This is only used when NUM is set to 8
 The following procedures are example C-code which represent read and write prcedures. 
 
 
-__
 #define REG(base, offset) (*(volatile uint32_t *)((base) + (offset)))
 
 void i2cWrite(uint32_t slaveAdr, uint32_t reg, uint32_t data, uint32_t dev) {
@@ -270,7 +269,6 @@ uint8_t i2cRead(uint32_t slaveAdr, uint32_t reg, uint32_t dev){
 	return REG(iBase, 0x40 + offsetDevice);
 }
 
-__
 
 
 
