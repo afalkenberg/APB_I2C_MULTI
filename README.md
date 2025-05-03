@@ -272,7 +272,6 @@ uint8_t i2cRead(uint32_t slaveAdr, uint32_t reg, uint32_t dev){
 
 
 
-
  
 
 
