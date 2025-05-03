@@ -123,11 +123,56 @@ The address 0x004 contains upto 32 rw bits.
 * write is 1
 * read is 0
 
+With this we have the following definition:
 
 - bit-0 sets read / write of interface-0
 - bit-1 sets read / write of interface-1
 - ...
 - bit-(num_i2c-1) sets read / write of the last populated I2C interface.
+
+### BUSY 0x018
+The address 0x018 contains upto 32 BUSY flags.
+This is a read only bit which shows which I2C is busy. 
+We technically never read any of this because the statemachine already takes care of it. 
+
+- bit-0 shows if interface-0 is busy
+- bit-1 shows if interface-1 is busy
+- ...
+- bit-(num_i2c-1) shows if the last populated I2C interface is busy.
+
+### NEXT_WRITE 0x01C
+The address 0x01C contains upto 32 NEXT_WRITE flags.
+This shows when the next byte can be written to the write register.  
+We are not using this bit either because the statemachine takes care of it. 
+
+- bit-0 shows that we can write the next byte to interface-0 
+- bit-1 shows that we can write the next byte to interface-1 
+- ...
+- bit-(num_i2c-1) shows that we can write the next byte to the last populated I2C interface.
+
+### NEXT_READ 0x020
+The address 0x20 contains upto 32 NEXT_READ flags. 
+This bit shows that the next byte was received and can be read out. 
+We are not using this because the statemachine takes care of it and we have upto 8 registers for data. 
+
+- bit-0 shows that the next byte from interface-0 is available
+- bit-1 shows that the next byte from interface-1 is available
+- ...
+- bit-(num_i2c-1) shows that the next byte from the last populated I2C interface is available.
+
+### ACK_ERROR 0x024
+
+The address 0x24 contains upto 32 ACK_ERROR flags. 
+This bit shows that the was an ACK error. 
+
+- bit-0 shows the ack error from interface-0 
+- bit-1 shows the ack error from interface-1 
+- ...
+- bit-(num_i2c-1) shows the ack error from the last populated I2C interface.
+
+
+
+
 
 
  
