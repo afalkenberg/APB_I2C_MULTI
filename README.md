@@ -107,8 +107,30 @@ The RW 1 bit defines that it is a read. The NUM can now be anything between 1 an
 The block read needs to be supported by the target. 
 
 
+## Register MAP
+Now since we gave an overview of how to operate the IP let us give a more concrete on how to come up with the correct addresses and bits of the control fields. 
+
+### ENABLE 0x000
+The address 0x000 contains upto 32 enable bits. 
+- bit-0 enables I2C interface-0
+- bit-1 enables I2C interface-1
+- ...
+- bit-(num_i2c-1) enables the last populated I2C interface.
+
+### RW 0x004
+The address 0x004 contains upto 32 rw bits. 
+
+* write is 1
+* read is 0
 
 
+- bit-0 sets read / write of interface-0
+- bit-1 sets read / write of interface-1
+- ...
+- bit-(num_i2c-1) sets read / write of the last populated I2C interface.
+
+
+ 
 
 
  
