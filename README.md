@@ -175,9 +175,102 @@ As stated before each I2C interface has its own section of 128 bytes. Neverthele
 For each of the following registers therefore there is an offset which is calculated as _offset = 128 * i_ with i being the I2C interface number. 
 
 ### ADDRESS _0x008 + i*0x80_
+This is a 7-bit slave address
+
+### REGISTER _0x00C + i*0x80_
+This is a 8-bit register number. This is the register on the I2C slave side. 
+
+### DATA _0x010 + i*0x80_
+This is a 8-bit data to be sent to the slave i.e. this is only operational during write.
+
+### NUM _0x014 + i*0x80_
+This is a 4-bit value accepting the values {0,1,2,3,4,5,6,7,8}. 
+Currently in the write mode only {0,1} are supported. 
+If this is set to 0 in write mode the DATA is ignored and not sent.
+In the read mode this should be set to one of {1,2,3,4,5,6,7,8}. 
+
+### DATA_READ[0] _0x40 + i*0x80_
+This is the first received byte. This holds a value after a read. 
+
+### DATA_READ[1] _0x44 + i*0x80_ 
+This is the 2nd revceived byte. This is only used when NUM is set to 2 or larger. 
+
+### DATA_READ[2] _0x44 + i*0x80_
+This is the 3rd revceived byte. This is only used when NUM is set to 3 or larger. 
+
+### DATA_READ[3] _0x44 + i*0x80_
+This is the 4th revceived byte. This is only used when NUM is set to 4 or larger. 
+
+### DATA_READ[4] _0x44 + i*0x80_
+This is the 5th revceived byte. This is only used when NUM is set to 5 or larger. 
+
+### DATA_READ[5] _0x44 + i*0x80_
+This is the 6th revceived byte. This is only used when NUM is set to 6 or larger. 
+
+### DATA_READ[6] _0x44 + i*0x80_
+This is the 7th revceived byte. This is only used when NUM is set to 7 or larger. 
+
+### DATA_READ[7] _0x44 + i*0x80_
+This is the 8th revceived byte. This is only used when NUM is set to 8 
 
 
+## Example C-Code
 
+The following procedures are example C-code which represent read and write prcedures. 
+
+
+__
+#define REG(base, offset) (*(volatile uint32_t *)((base) + (offset)))
+
+void i2cWrite(uint32_t slaveAdr, uint32_t reg, uint32_t data, uint32_t dev) {
+	uint32_t iBase = 0x00009000;
+	uint32_t device = dev;  // 0 .. 31
+	uint32_t offsetDevice = device * 128;
+	uint32_t offsetBit = (1 << device);
+
+	REG(iBase, 0x00) = 0x00000000;
+	REG(iBase, 0x04) = 0x00000000; //rw read = 1 write = 0
+
+	REG(iBase, 0x08 + offsetDevice) = slaveAdr; //addr 6C
+	REG(iBase, 0x0C + offsetDevice) = reg;      //reg
+	REG(iBase, 0x10 + offsetDevice) = data;     //data write
+	REG(iBase, 0x14 + offsetDevice) = 0x01;     //data write num only 0 or 1 accepted
+
+	REG(iBase, 0x00) = offsetBit;
+	REG(iBase, 0x00) = 0x00000000;
+}
+
+uint8_t i2cRead(uint32_t slaveAdr, uint32_t reg, uint32_t dev){
+	uint32_t iBase   = 0x00009000;
+	uint32_t device = dev;  // 0 .. 31
+	uint32_t offsetDevice = device * 128;
+	uint32_t offsetBit = 1 << device;
+
+	REG(iBase, 0x00) = 0x00000000;
+	REG(iBase, 0x04) = 0x00000000; //rw read = 1 write = 0
+
+	REG(iBase, 0x08 + offsetDevice) = slaveAdr; //addr 6C
+	REG(iBase, 0x0C + offsetDevice) = reg; //reg
+	REG(iBase, 0x10 + offsetDevice) = 0x00; //data write here data is not written
+	REG(iBase, 0x14 + offsetDevice) = 0x00; //data write 0 only reg address is written
+	REG(iBase, 0x00) = offsetBit;
+	REG(iBase, 0x00) = 0x00000000;
+
+	delay(20);
+	REG(iBase, 0x04) = offsetBit; //rw read = 1 write = 0
+	REG(iBase, 0x08 + offsetDevice) = slaveAdr;   //addr 6C
+	REG(iBase, 0x0C + offsetDevice) = reg;
+	REG(iBase, 0x14 + offsetDevice) = 0x01;       // read one element
+
+	REG(iBase, 0x00) = offsetBit;
+	REG(iBase, 0x00) = 0x00000000;
+	delay(20);
+
+
+	return REG(iBase, 0x40 + offsetDevice);
+}
+
+__
 
 
 
