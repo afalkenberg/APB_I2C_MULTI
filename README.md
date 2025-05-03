@@ -73,7 +73,45 @@ One mode is to write only the ADDRESS and REGISTER, which is a precursor for a r
 If we write ADDRESS, REGISTER and DATA then the NUM needs to be set to 1. For write we support only NUM = {0,1} and for read we support only 
 NUM = {1,2,3,4,5,6,7,8}.
 
+### Normal Write Operation 
+To write a byte to a I2C register we need to perform the following steps. 
+1. Define the Target ADDRESS or slave ADDRESS
+2. Define the REGISTER
+3. Define the DATA
+4. Set RW to 0
+5. Set NUM to 1
+6. Set ENABLE to 1
+7. Set ENABLE to 0
 
+### Write Operation before a Read Operation
+Before we can perform a read operation we need to send the ADDRESS and the REGISTER over to the I2C. 
+We are not sending the DATA therefore the following sequence is used. 
+1. Define the Target ADDRESS or slave ADDRESS
+2. Define the REGISTER
+3. Set RW to 0
+4. Set NUM to 0
+5. Set ENABLE to 1
+6. Set ENABLE to 0
+
+Setting the NUM to 0 ensures that no DATA byte is sent. 
+
+### Read Operation
+The read operation therefore can be performed as follows after the above write operation already set the register. 
+1. Define the Target ADDRESS or slave ADDRESS
+2. Set RW to 1
+3. Set NUM to 1
+4. Set ENABLE to 1
+5. Set ENABLE to 0
+
+The RW 1 bit defines that it is a read. The NUM can now be anything between 1 and 8. In the example we only read one byte. 
+The block read needs to be supported by the target. 
+
+
+
+
+
+
+ 
 
 
 
